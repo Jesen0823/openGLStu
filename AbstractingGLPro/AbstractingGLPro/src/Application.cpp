@@ -4,6 +4,8 @@
 #include<sstream>
 #include<GL/glew.h> /*要在dlfw之前，否则error*/
 #include <GLFW/glfw3.h>
+#include "VertexBufferLayout.h"
+#include "Renderer.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
@@ -176,13 +178,18 @@ void shaderWithUniform7(GLFWwindow* window){
 	// 绑定顶点缓冲区并设置其布局，变成了，绑定该顶点数组对象，它包含所有状态
 	// 也就是说，之前绑定顶点，设置布局，绑定索引缓冲区的方式，改为绑定顶点数组，绑定索引缓冲区，后面渲染时，找到索引缓冲区，然后绘制
 
+	Renderer renderer;
+
+
 	float r = 0.0f;
 	float increment = 0.05f;
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
 		/* Render here */
-		GLCall2(glClear(GL_COLOR_BUFFER_BIT));
+		//GLCall2(glClear(GL_COLOR_BUFFER_BIT));
+		///// 或者 直接在Renderer处理
+		renderer.Clear();
 
 		// 添加重新绑定
 		//GLCall2(glUseProgram(shader));
@@ -191,19 +198,24 @@ void shaderWithUniform7(GLFWwindow* window){
 		// 替换为：
 		shader.Bind();
 		shader.setUniform4f("u_Color", r, 0.5f, 0.8f, 1.0f);
+
+		renderer.Draw(va,ib,shader);
 		
 		// 替换以下：
 		//GLCall2(glBindVertexArray(vao));  // 绑定顶点数组
 		// 为：
-		va.Bind();
+		//va.Bind();
+		///// 或者 直接在Renderer处理
 
 		// 替换以下：
 		//GLCall2(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 		// 为:
-		ib.Bind();
+		//ib.Bind();
+		///// 或者 直接在Renderer处理
 
 		// glDrawElements是与索引缓冲区一起使用的
-		GLCall2(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));// 无异常代码
+		//GLCall2(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));// 无异常代码
+		///// 或者 直接在Renderer处理
 
 		// 在while循环中改变红色色值，形成动画效果
 		if (r > 1.0f)
