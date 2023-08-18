@@ -12,6 +12,9 @@
 #include "Shader.h"
 #include "Texture.h"
 
+#include "vendor/glm/glm.hpp"
+#include "vendor/glm/gtc/matrix_transform.hpp"
+
 // 7.使用Uniform来通过CPU向GPU传递值，比如颜色值，以便在着色器之外动态设定
 void handleOpenGl(GLFWwindow* window){
 	// 两个三角形，6个二维顶点去掉重叠，画一个正方形
@@ -42,9 +45,13 @@ void handleOpenGl(GLFWwindow* window){
 
 	IndexBuffer ib(indices, 6);
 
+	/* 正交矩阵 处理投影, 左侧边缘,右侧边缘,底部边缘,顶部边缘,近平面,远平面 */
+	glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
 	Shader shader("res/shaders/Basic3.shader");
 	shader.Bind();
 	shader.setUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 1.0f);
+	shader.setUniformMat4f("u_MVP", proj);
 
 	Texture texture("res/logoimg.png");
 	texture.Bind();
