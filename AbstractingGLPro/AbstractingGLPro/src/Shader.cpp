@@ -106,7 +106,7 @@ void Shader::Bind()const
 	GLCall2(glUseProgram(m_RenderID));
 }
 
-unsigned int  Shader::GetUniformLocation(const std::string name)
+/*unsigned*/ int  Shader::GetUniformLocation(const std::string name)
 {
 	if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
 	{
@@ -120,6 +120,10 @@ unsigned int  Shader::GetUniformLocation(const std::string name)
 	
 	m_UniformLocationCache[name] = location;
 	return location;
+}
+void Shader::setUniform1i(const std::string& name, int value)
+{
+	GLCall2(glUniform1i(GetUniformLocation(name), value));
 }
 
 void Shader::setUniform1f(const std::string& name, float value)
