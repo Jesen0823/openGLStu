@@ -19,11 +19,11 @@
 void handleOpenGl(GLFWwindow* window){
 	// 两个三角形，6个二维顶点去掉重叠，画一个正方形
 	float position2[] = {
-		-0.5f, -0.5f, 0.0f, 0.0f, //0
-		0.5f,  -0.5f, 1.0f, 0.0f, //1
-		0.5f,  0.5f,  1.0f, 1.0f, //2
+		100.0f, 100.0f, 0.0f, 0.0f, //0
+		200.0f,  100.0f, 1.0f, 0.0f, //1
+		200.0f,  200.0f,  1.0f, 1.0f, //2
 
-		-0.5f, 0.5f,  0.0f, 1.0f  //3
+		100.0f, 200.0f, 0.0f, 1.0f  //3
 	};
 	// 索引
 	unsigned int indices[] = {
@@ -45,15 +45,34 @@ void handleOpenGl(GLFWwindow* window){
 
 	IndexBuffer ib(indices, 6);
 
-	/* 正交矩阵 处理投影, 左侧边缘,右侧边缘,底部边缘,顶部边缘,近平面,远平面 */
-	glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+	/* 正交矩阵，投影矩阵 处理投影, 左侧边缘,右侧边缘,底部边缘,顶部边缘,近平面,远平面 */
+	glm::mat4 proj = glm::ortho(-0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+	//glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
+	//glm::vec4 result = proj * vp;
+	
+	 // MVP 模型视图投影矩阵，矩阵相乘  
+	// 模型model和视图矩阵view matrix不同，视图矩阵是相机视图的一种
+	// 视图矩阵代表相机的位置和方向
+	// 模型矩阵代表观察对象
+	// 矩阵变换，即平移旋转缩放的转换
+
+
+	// 视图矩阵 glm::mat4(1.0f) 构造一个单位矩阵
+	// 相机左移100，则效果是相对的，物体右移100
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+	// 模型矩阵
+	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+
+	// 为mvp矩阵创建一个glm映射
+	glm::mat4 mvp = proj * view * model;
 
 	Shader shader("res/shaders/Basic3.shader");
 	shader.Bind();
 	shader.setUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 1.0f);
-	shader.setUniformMat4f("u_MVP", proj);
+	//shader.setUniformMat4f("u_MVP", proj);
+	shader.setUniformMat4f("u_MVP", mvp);
 
-	Texture texture("res/logoimg.png");
+	Texture texture("res/demo.png");
 	texture.Bind();
 	shader.setUniform1i("u_Texture", 0);
 
@@ -104,7 +123,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_COMPAT_PROFILE);
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(960, 540, "Hello World", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
