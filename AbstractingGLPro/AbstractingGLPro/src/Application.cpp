@@ -15,6 +15,9 @@
 #include "vendor/glm/glm.hpp"
 #include "vendor/glm/gtc/matrix_transform.hpp"
 
+#include "vendor/imgui/imgui.h"
+#include "vendor/imgui/imgui_impl_glfw_gl3.h"
+
 // 7.使用Uniform来通过CPU向GPU传递值，比如颜色值，以便在着色器之外动态设定
 void handleOpenGl(GLFWwindow* window){
 	// 两个三角形，6个二维顶点去掉重叠，画一个正方形
@@ -60,17 +63,12 @@ void handleOpenGl(GLFWwindow* window){
 	// 视图矩阵 glm::mat4(1.0f) 构造一个单位矩阵
 	// 相机左移100，则效果是相对的，物体右移100
 	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
-	// 模型矩阵
-	glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
-
-	// 为mvp矩阵创建一个glm映射
-	glm::mat4 mvp = proj * view * model;
+	
 
 	Shader shader("res/shaders/Basic3.shader");
 	shader.Bind();
 	shader.setUniform4f("u_Color", 0.8f, 0.3f, 0.7f, 1.0f);
 	//shader.setUniformMat4f("u_MVP", proj);
-	shader.setUniformMat4f("u_MVP", mvp);
 
 	Texture texture("res/demo.png");
 	texture.Bind();
@@ -83,6 +81,13 @@ void handleOpenGl(GLFWwindow* window){
 
 	Renderer renderer;
 
+	ImGui::CreateContext();
+	ImGui_ImplGlfwGL3_Init(window, true);
+	// Setup style
+	ImGui::StyleColorsDark();
+
+	glm::vec3 translation(200, 200, 0);
+
 	float r = 0.0f;
 	float increment = 0.05f;
 	/* Loop until the user closes the window */
@@ -90,8 +95,16 @@ void handleOpenGl(GLFWwindow* window){
 	{
 		renderer.Clear();
 
+		ImGui_ImplGlfwGL3_NewFrame();
+
+		glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+		// 为mvp矩阵创建一个glm映射
+		glm::mat4 mvp = proj * view * model;
+
 		shader.Bind();
 		shader.setUniform4f("u_Color", r, 0.5f, 0.8f, 1.0f);
+		shader.setUniformMat4f("u_MVP", mvp);
+
 		renderer.Draw(va,ib,shader);
 		
 		/* 在while循环中改变红色色值，形成动画效果 */
@@ -99,7 +112,16 @@ void handleOpenGl(GLFWwindow* window){
 			increment = -0.05f;
 		else if (r < 0.0f)
 			increment = 0.05f;
+
 		r += increment;
+
+		{
+			ImGui::SliderFloat("Translation", &translation.x, 0.0f, 960.0f);    
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+		}
+
+		ImGui::Render();
+		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
@@ -143,6 +165,9 @@ int main(void)
 	std::cout << glGetString(GL_VERSION) << std::endl;
 
 	handleOpenGl(window);
+	// Cleanup
+	ImGui_ImplGlfwGL3_Shutdown();
+	ImGui::DestroyContext();
 	glfwTerminate();
 	return 0;
 }
