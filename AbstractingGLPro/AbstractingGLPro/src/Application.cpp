@@ -22,11 +22,10 @@
 void handleOpenGl(GLFWwindow* window){
 	// 两个三角形，6个二维顶点去掉重叠，画一个正方形
 	float position2[] = {
-		100.0f, 100.0f, 0.0f, 0.0f, //0
-		200.0f,  100.0f, 1.0f, 0.0f, //1
-		200.0f,  200.0f,  1.0f, 1.0f, //2
-
-		100.0f, 200.0f, 0.0f, 1.0f  //3
+		-50.0f, -50.0f, 0.0f, 0.0f, //0
+		 50.0f, -50.0f, 1.0f, 0.0f, //1
+		 50.0f,  50.0f, 1.0f, 1.0f, //2
+		-50.0f,  50.0f, 0.0f, 1.0f  //3
 	};
 	// 索引
 	unsigned int indices[] = {
@@ -62,7 +61,7 @@ void handleOpenGl(GLFWwindow* window){
 
 	// 视图矩阵 glm::mat4(1.0f) 构造一个单位矩阵
 	// 相机左移100，则效果是相对的，物体右移100
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 	
 
 	Shader shader("res/shaders/Basic3.shader");
@@ -86,7 +85,8 @@ void handleOpenGl(GLFWwindow* window){
 	// Setup style
 	ImGui::StyleColorsDark();
 
-	glm::vec3 translation(200, 200, 0);
+	glm::vec3 translationA(200, 200, 0);
+	glm::vec3 translationB(400, 200, 0);
 
 	float r = 0.0f;
 	float increment = 0.05f;
@@ -97,15 +97,21 @@ void handleOpenGl(GLFWwindow* window){
 
 		ImGui_ImplGlfwGL3_NewFrame();
 
-		glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
-		// 为mvp矩阵创建一个glm映射
-		glm::mat4 mvp = proj * view * model;
+		{
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), translationA);
+			glm::mat4 mvp = proj * view * model;
+			shader.Bind();
+			shader.setUniformMat4f("u_MVP", mvp);
+			renderer.Draw(va, ib, shader);
+		}
 
-		shader.Bind();
-		shader.setUniform4f("u_Color", r, 0.5f, 0.8f, 1.0f);
-		shader.setUniformMat4f("u_MVP", mvp);
-
-		renderer.Draw(va,ib,shader);
+		{
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), translationB);
+			glm::mat4 mvp = proj * view * model;
+			shader.Bind();
+			shader.setUniformMat4f("u_MVP", mvp);
+			renderer.Draw(va, ib, shader);
+		}
 		
 		/* 在while循环中改变红色色值，形成动画效果 */
 		if (r > 1.0f)
@@ -116,7 +122,8 @@ void handleOpenGl(GLFWwindow* window){
 		r += increment;
 
 		{
-			ImGui::SliderFloat("Translation", &translation.x, 0.0f, 960.0f);    
+			ImGui::SliderFloat("Translation A", &translationA.x, 0.0f, 960.0f);   
+			ImGui::SliderFloat("Translation B", &translationB.x, 0.0f, 960.0f);
 			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		}
 
