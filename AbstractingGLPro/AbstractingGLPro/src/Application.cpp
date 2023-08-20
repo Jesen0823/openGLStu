@@ -34,19 +34,39 @@ void handleOpenGl(GLFWwindow* window){
 	// Setup style
 	ImGui::StyleColorsDark();
 
+	test::Test* currentTest = nullptr;;
+	test::TestMenu* testMenu = new test::TestMenu(currentTest);
+	currentTest = testMenu;
+
+	testMenu->RegisterText<test::TestClearColor>("Clear Color");
+
 	test::TestClearColor test;
 
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
+		GLCall2(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 		renderer.Clear();
 
-		test.OnUpdate(0.0f);
-		test.OnRender();
+		//test.OnUpdate(0.0f);
+		//test.OnRender();
 
 		ImGui_ImplGlfwGL3_NewFrame();
+		if (currentTest)
+		{
+			currentTest->OnUpdate(0.0f);
+			currentTest->OnRender();
+			ImGui::Begin("Test");
+			if (currentTest != testMenu && ImGui::Button("<-"))
+			{
+				delete currentTest;
+				currentTest = testMenu;
+			}
+			currentTest->OnImGuiRender();
+			ImGui::End();
+		}
 
-		test.OnImGuiRender();
+		//test.OnImGuiRender();
 
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
