@@ -57,6 +57,9 @@
     <ClCompile Include="src\vendor\imgui\imgui_impl_glfw_gl3.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\test\TestClearColor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\VertexArray.h">
@@ -534,6 +537,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\vendor\imgui\stb_truetype.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test\Test.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\test\TestClearColor.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
