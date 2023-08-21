@@ -66,6 +66,9 @@
     <ClCompile Include="src\test\TestTexture2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\test\TestBatchRender.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\VertexArray.h">
@@ -554,9 +557,15 @@
     <ClInclude Include="src\test\TestTexture2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\test\TestBatchRender.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\logoimg.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\demo.png">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
@@ -897,5 +906,6 @@
     <None Include="src\vendor\glm\gtx\wrap.inl">
       <Filter>头文件</Filter>
     </None>
+    <None Include="res\shaders\Batch.shader" />
   </ItemGroup>
 </Project>

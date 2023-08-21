@@ -30,6 +30,7 @@ public:
 
 	// …Ë÷√Uniform
 	void setUniform1i(const std::string& name, int value);
+	void setUniform1iv(const std::string& name, int count, int* value);
 	void setUniform1f(const std::string& name, float value);
 	void setUniform2f(const std::string& name, const glm::vec2& value);
 	void setUniform3f(const std::string& name, const glm::vec3& value);

@@ -20,6 +20,7 @@
 
 #include "test\TestClearColor.h"
 #include "test\TestTexture2D.h"
+#include "test\TestBatchRender.h"
 
 // 7.使用Uniform来通过CPU向GPU传递值，比如颜色值，以便在着色器之外动态设定
 void handleOpenGl(GLFWwindow* window){
@@ -39,11 +40,11 @@ void handleOpenGl(GLFWwindow* window){
 	test::TestMenu* testMenu = new test::TestMenu(currentTest);
 	currentTest = testMenu;
 
-	testMenu->RegisterText<test::TestClearColor>("Clear Color");
-	testMenu->RegisterText<test::TestTexture2D>("texture 2D");
-
+	testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+	testMenu->RegisterTest<test::TestTexture2D>("texture 2D");
+	testMenu->RegisterTest<test::TestBatchRender>("batch Render");
+	
 	test::TestClearColor test;
-
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
@@ -51,6 +52,7 @@ void handleOpenGl(GLFWwindow* window){
 		renderer.Clear();
 
 		ImGui_ImplGlfwGL3_NewFrame();
+		
 		if (currentTest)
 		{
 			currentTest->OnUpdate(0.0f);
@@ -65,7 +67,7 @@ void handleOpenGl(GLFWwindow* window){
 			ImGui::End();
 		}
 
-		//test.OnImGuiRender();
+		test.OnImGuiRender();
 
 		ImGui::Render();
 		ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
@@ -76,8 +78,12 @@ void handleOpenGl(GLFWwindow* window){
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
+	delete currentTest;
+	if (currentTest != testMenu)
+	{
+		delete testMenu;
+	}
 }
-
 int main(void)
 {
 	GLFWwindow* window;
@@ -115,6 +121,8 @@ int main(void)
 	// Cleanup
 	ImGui_ImplGlfwGL3_Shutdown();
 	ImGui::DestroyContext();
+	glfwDestroyWindow(window);
+
 	glfwTerminate();
 	return 0;
 }
