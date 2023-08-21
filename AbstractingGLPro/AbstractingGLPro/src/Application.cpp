@@ -19,6 +19,7 @@
 #include "vendor/imgui/imgui_impl_glfw_gl3.h"
 
 #include "test\TestClearColor.h"
+#include "test\TestTexture2D.h"
 
 // 7.使用Uniform来通过CPU向GPU传递值，比如颜色值，以便在着色器之外动态设定
 void handleOpenGl(GLFWwindow* window){
@@ -39,6 +40,7 @@ void handleOpenGl(GLFWwindow* window){
 	currentTest = testMenu;
 
 	testMenu->RegisterText<test::TestClearColor>("Clear Color");
+	testMenu->RegisterText<test::TestTexture2D>("texture 2D");
 
 	test::TestClearColor test;
 
@@ -47,9 +49,6 @@ void handleOpenGl(GLFWwindow* window){
 	{
 		GLCall2(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 		renderer.Clear();
-
-		//test.OnUpdate(0.0f);
-		//test.OnRender();
 
 		ImGui_ImplGlfwGL3_NewFrame();
 		if (currentTest)
